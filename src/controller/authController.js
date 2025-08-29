@@ -38,90 +38,80 @@ export default class AuthController {
     }
   };
 
+  
+  // LOGIN USER
   login = async (req, res) => {
     try {
       const { email, password } = req.body || {};
-      console.log('req.body', req.body)
       if (!email || !password) {
         return res.status(400).json({ message: "email and password are required" });
       }
 
-      const user = await User.findOne({ email: String(email).trim().toLowerCase() });
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
+      const user = await User.findOne({ email: email.trim().toLowerCase() });
+      if (!user) return res.status(404).json({ message: "User not found" });
 
-      const valid = await bcrypt.compare(String(password), user.password);
-      if (!valid) {
-        return res.status(401).json({ message: "Invalid credentials" });
-      }
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid) return res.status(401).json({ message: "Invalid credentials" });
 
-      const payload = { userId: String(user._id) };
+      const payload = { userId: user._id.toString() };
       const accessToken = await generateAccessToken(payload);
       const refreshToken = await generateRefreshToken(payload);
+
+      // ✅ Store refresh token in HTTP-only cookie for better security
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
 
       return res.status(200).json({
         message: "Login successful",
         accessToken,
-        refreshToken,
         user: { id: user._id, name: user.name, email: user.email, role: user.role },
       });
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   };
 
+  // REFRESH TOKEN
   refresh = async (req, res) => {
     try {
-      const { refreshToken } = req.body || {};
-      if (!refreshToken) {
-        return res.status(400).json({ message: "refreshToken is required" });
-      }
+      const token = req.cookies?.refreshToken || req.body?.refreshToken; // Prefer cookie
+      if (!token) return res.status(400).json({ message: "refreshToken is required" });
 
       let payload;
       try {
-        payload = jwt.verify(refreshToken, REFRESH_SECRET);
-      } catch (e) {
+        payload = jwt.verify(token, REFRESH_SECRET);
+      } catch {
         return res.status(401).json({ message: "Invalid or expired refresh token" });
       }
 
-      const userId = payload.userId || payload.sub;
-      const user = await User.findById(userId).select("_id role");
-      if (!user) {
-        return res.status(401).json({ message: "User not found" });
-      }
+      const user = await User.findById(payload.userId).select("_id role");
+      if (!user) return res.status(401).json({ message: "User not found" });
 
-      const newAccessToken = await generateAccessToken({ userId: String(user._id) });
+      const newAccessToken = await generateAccessToken({ userId: user._id.toString() });
       return res.status(200).json({ accessToken: newAccessToken });
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   };
 
-  logout = async (_req, res) => {
+  // LOGOUT USER
+  logout = async (req, res) => {
     try {
-      // Stateless JWT: client should discard tokens. Optionally, implement blacklist if required.
-      return res.status(200).json({ message: "Logged out" });
+      res.clearCookie("refreshToken");
+      return res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   };
 
-  me = async (req, res) => {
-    try {
-      const userId = req.user?.id;
-      if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const user = await User.findById(userId).select("name email role");
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      return res.status(200).json({ user: { id: user._id, name: user.name, email: user.email, role: user.role } });
-    } catch (error) {
-      return res.status(500).json({ message: "Internal server error" });
-    }
-  };
+  
 }
 
 

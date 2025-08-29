@@ -12,7 +12,8 @@ router.patch('/updateStatus/:id', candidateController.updateCandidateStatus.bind
 router.get('/getAllEmployees', candidateController.getAllEmployees.bind(candidateController));
 router.delete('/deleteEmployee/:id', candidateController.deleteEmployee.bind(candidateController));
 router.patch('/updateEmployee/:id', candidateController.updateEmployee.bind(candidateController));
-
+router.get("/getAll", candidateController.getAllAttendance.bind(candidateController));
+router.patch("/updateStatus/:id",  candidateController.updateStatus.bind(candidateController));
 
 
 export const candidateRoute = router;

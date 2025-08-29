@@ -4,8 +4,9 @@ const attendanceSchema = new mongoose.Schema(
   {
     employeeId: { type: mongoose.Schema.Types.ObjectId, ref: "Employee", required: true },
     date: { type: Date, required: true },
-    status: { type: String, enum: ["Present", "Absent", "Half-Day", "Remote"], required: true },
+    status: { type: String, enum: ["Present", "Absent", "Medical Leave", "Work From Home"], required: true },
     remarks: { type: String, default: "" },
+    task: { type: String, default: "General Task" },
   },
   { timestamps: true }
 );

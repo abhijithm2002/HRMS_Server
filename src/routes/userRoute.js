@@ -10,7 +10,7 @@ router.post('/userSignup', authController.register.bind(authController));
 router.post('/userLogin', authController.login.bind(authController));
 router.post('/refresh', authController.refresh.bind(authController));
 router.post('/logout', authenticate, authController.logout.bind(authController));
-router.get('/me', authenticate, authController.me.bind(authController));
+
 
 
 
