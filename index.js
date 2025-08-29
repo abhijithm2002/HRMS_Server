@@ -10,7 +10,7 @@ const app = express();
 
 app.use(express.json());
 const corsOptions = {
-    origin: ['http://localhost:5173','hrms-client-n29o.vercel.app'],
+    origin: ['http://localhost:5173','https://hrms-client-n29o.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
 };
