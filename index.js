@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { userRoutes } from "./src/routes/userRoute.js";
+import { candidateRoute } from "./src/routes/candidateRoute.js";
 import { connectDB } from "./src/config/db.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use('/api/auth', userRoutes);
+app.use('/api/candidates', candidateRoute);
 
 const PORT = process.env.PORT || 3000
 

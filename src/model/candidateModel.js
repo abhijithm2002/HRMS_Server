@@ -8,8 +8,9 @@ const candidateSchema = new mongoose.Schema(
     position: { type: String, trim: true },
     resumeUrl: { type: String, default: null },
     resumeFileName: { type: String, default: null },
+    experience:{type: Number, trim:true},
     notes: { type: String, default: "" },
-    status: { type: String, enum: ["Applied", "Interviewing", "Selected", "Rejected"], default: "Applied" },
+    status: { type: String, enum: ["New", "Scheduled","Ongoing", "Selected", "Rejected"], default: "New" },
   },
   { timestamps: true }
 );
