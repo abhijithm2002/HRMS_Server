@@ -9,6 +9,10 @@ const candidateController = new CandidateController()
 router.post('/addCandidate', candidateController.addCandidate.bind(candidateController));
 router.get('/getAllCandidates', candidateController.getAllCandidates.bind(candidateController));
 router.patch('/updateStatus/:id', candidateController.updateCandidateStatus.bind(candidateController));
+router.get('/getAllEmployees', candidateController.getAllEmployees.bind(candidateController));
+router.delete('/deleteEmployee/:id', candidateController.deleteEmployee.bind(candidateController));
+router.patch('/updateEmployee/:id', candidateController.updateEmployee.bind(candidateController));
+
 
 
 export const candidateRoute = router;
