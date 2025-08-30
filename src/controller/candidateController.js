@@ -100,7 +100,8 @@ export default class CandidateController {
                         position: "Intern",
                         department: candidate.position,
                         role: "Employee",
-                        status: "Active",
+                        status: "Absent",
+                        task: "General Task",
                         startDate: new Date(),
                     });
 
@@ -182,12 +183,13 @@ export default class CandidateController {
         }
     };
     updateStatus = async (req, res) => {
+        console.log('entered updatte statusss ////////////////////')
         try {
           const { id } = req.params;
           const { status } = req.body;
-    
-          const record = await Attendance.findByIdAndUpdate(id, { status }, { new: true });
-    
+            console.log('upddate status', id, status)
+          const record = await Employee.findByIdAndUpdate(id, { status }, { new: true });
+            
           if (!record) return res.status(404).json({ success: false, message: "Attendance record not found" });
     
           return res.status(200).json({ success: true, data: record });

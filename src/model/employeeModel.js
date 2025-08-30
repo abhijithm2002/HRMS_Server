@@ -8,7 +8,9 @@ const employeeSchema = new mongoose.Schema(
     position: { type: String, enum: ["Intern", "Full Time", "Junior", "Senior", "Team Lead"], default: "Intern" },
     department: { type: String, default: null },
     role: { type: String, enum: ["HR", "Employee", "Admin"], default: "Employee" },
-    status: { type: String, enum: ["Active", "Inactive"], default: "Active" },
+    status: { type: String, enum: ["Present", "Absent", "Medical Leave", "Work From Home"], required: true },
+    remarks: { type: String, default: "" },
+    task: { type: String, default: "General Task" },
     startDate: { type: Date, default: null },
   },
   { timestamps: true }
